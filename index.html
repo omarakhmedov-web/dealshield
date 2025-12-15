@@ -73,7 +73,16 @@
         <div class="output" id="replyBox" style="white-space:pre-wrap;">—</div>
         <div class="row">
           <button id="copyReply">Copy safe reply</button>
-          <button id="exportMd">Export summary (Markdown)</button>
+
+          <span id="exportWrap" style="position:relative; display:inline-block;">
+            <button id="exportBtn" aria-haspopup="menu" aria-expanded="false">Export report</button>
+            <div id="exportMenu" role="menu" hidden
+                 style="position:absolute; right:0; top:calc(100% + 6px); min-width:180px; background:#12151a; border:1px solid rgba(255,255,255,.14); border-radius:12px; padding:10px; box-shadow:0 12px 30px rgba(0,0,0,.45); z-index:50;">
+              <div style="font-size:12px; opacity:.85; margin-bottom:8px;">Choose format</div>
+              <button id="exportTxt" role="menuitem" style="width:100%; margin-bottom:8px;">TXT</button>
+              <button id="exportPdf" role="menuitem" style="width:100%;">PDF</button>
+            </div>
+          </span>
         </div>
       </div>
 
