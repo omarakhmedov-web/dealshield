@@ -3,7 +3,34 @@
 // Ref: https://huggingface.co/docs/transformers.js/en/index  | CDN examples via jsDelivr package page.
 // NER model: Xenova/bert-base-NER (Transformers.js compatible).
 
-import { pipeline } from "https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2";
+// Lazy-load Transformers.js to avoid hard failure if a CDN/model is unavailable.
+let _pipelineFn = null;
+let _pipelineLoadPromise = null;
+
+async function _getPipelineFn(){
+  if (_pipelineFn) return _pipelineFn;
+  if (_pipelineLoadPromise) return _pipelineLoadPromise;
+  const sources = [
+    "https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2",
+    "https://unpkg.com/@xenova/transformers@2.17.2?module",
+    "https://esm.sh/@xenova/transformers@2.17.2"
+  ];
+  _pipelineLoadPromise = (async () => {
+    let lastErr = null;
+    for (const url of sources){
+      try {
+        const mod = await import(url);
+        if (mod && typeof mod.pipeline === "function"){
+          _pipelineFn = mod.pipeline;
+          return _pipelineFn;
+        }
+      } catch (e) { lastErr = e; }
+    }
+    throw lastErr || new Error("Failed to load transformers pipeline");
+  })();
+  return _pipelineLoadPromise;
+}
+
 
 const $ = (id) => document.getElementById(id);
 
@@ -180,14 +207,28 @@ function scoreRisk(text){
 
 async function ensureNER(){
   if (ner) return ner;
-  aiStatus.textContent = "AI: loading model…";
-  // Use quantized model for browsers when available.
-  // Docs: prior to Transformers.js v3, 'quantized: true' loads q8 model variants when provided.
-  ner = await pipeline("token-classification", "Xenova/bert-base-NER", {
-    quantized: true,
-  });
-  aiStatus.textContent = "AI: ready";
-  return ner;
+
+  aiStatus.textContent = "Mode: loading…";
+  try {
+    const pipeline = await _getPipelineFn();
+    // Smaller NER model = faster cold-start.
+    const modelId = "Xenova/distilbert-base-cased-finetuned-conll03-english";
+
+    try {
+      // Use quantized model for browsers when available.
+      ner = await pipeline("token-classification", modelId, { quantized: true });
+    } catch (e) {
+      // Some environments don't support quantized weights; retry.
+      ner = await pipeline("token-classification", modelId);
+    }
+
+    aiStatus.textContent = "Mode: AI + rules";
+    return ner;
+  } catch (e) {
+    console.warn(e);
+    aiStatus.textContent = "Mode: rules-only";
+    throw e;
+  }
 }
 
 function buildSafeReply(level, snapshot){
@@ -314,7 +355,7 @@ async function analyze(){
 
   try{
     const classifier = await ensureNER();
-    aiStatus.textContent = "AI: extracting entities…";
+    aiStatus.textContent = "Mode: extracting…";
     const ents = await classifier(text);
     // Keep only top entities; group by label
     const keep = ents
@@ -330,10 +371,10 @@ async function analyze(){
       pretty.push(`${e.word} (${e.entity})`);
     }
     snapshot.parties = pretty.length ? pretty.join(", ") : null;
-    aiStatus.textContent = "AI: ready";
+    aiStatus.textContent = "Mode: AI + rules";
   } catch (e){
     console.warn(e);
-    aiStatus.textContent = "AI: unavailable (fallback)";
+    aiStatus.textContent = "Mode: rules-only";
   }
 
   renderSnapshot(snapshot);
@@ -391,3 +432,8 @@ exportMdBtn.addEventListener("click", async () => {
 // Default demo text
 input.value = DEMOS.clean;
 highlightedEl.textContent = "Run analysis to see highlighted signals.";
+
+// Warm up the on-device NER model in the background (non-blocking).
+setTimeout(() => {
+  ensureNER().catch(() => {});
+}, 300);
