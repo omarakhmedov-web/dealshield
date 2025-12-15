@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DealShield — AI Deal Risk & Verification Copilot</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="brand">
+        <h1>DealShield</h1>
+        <p>Paste a chat/email/invoice → get a Deal Snapshot, explainable risk score, verification plan, and a safe reply.</p>
+      </div>
+      <div class="badge">
+        <span>VisaVerse MVP</span>
+        <span style="color:#f0c36b;">•</span>
+        <span id="aiStatus">AI: idle</span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Input</h2>
+        <textarea id="input" placeholder="Paste a chat, email, or invoice text here..."></textarea>
+        <div class="row">
+          <button class="primary" id="analyzeBtn">Analyze</button>
+          <button id="demo1">Load demo (clean)</button>
+          <button id="demo2">Load demo (bank change)</button>
+          <button id="demo3">Load demo (advance-fee)</button>
+        </div>
+        <div class="footer">
+          Tip: first AI run may take longer while the model downloads (runs fully in your browser).
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Risk</h2>
+        <div class="risk">
+          <div>
+            <div class="score"><span id="score">—</span><span style="color:var(--muted); font-size:14px;">/100</span></div>
+            <div id="riskPill" class="pill">—</div>
+          </div>
+          <div style="text-align:right;">
+            <small>Explainable reasons</small>
+          </div>
+        </div>
+        <hr />
+        <div class="output">
+          <ul id="reasons"></ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Deal Snapshot</h2>
+        <div class="kv" id="snapshot">
+          <div class="k">Parties</div><div id="parties">—</div>
+          <div class="k">Amount</div><div id="amount">—</div>
+          <div class="k">Deadline</div><div id="deadline">—</div>
+          <div class="k">Payment</div><div id="payment">—</div>
+          <div class="k">Links</div><div id="links">—</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Verification Plan</h2>
+        <div class="output">
+          <ul id="plan"></ul>
+        </div>
+        <hr />
+        <h2>Safe Reply</h2>
+        <div class="output" id="replyBox" style="white-space:pre-wrap;">—</div>
+        <div class="row">
+          <button id="copyReply">Copy safe reply</button>
+          <button id="exportMd">Export summary (Markdown)</button>
+        </div>
+      </div>
+
+      <div class="card" style="grid-column:1/-1;">
+        <h2>Highlighted input</h2>
+        <div class="output" id="highlighted" style="white-space:pre-wrap;">—</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
