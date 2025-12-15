@@ -205,10 +205,14 @@ function scoreRisk(text){
   return { score, level, reasons, plan: uniqPlan, links };
 }
 
-async function ensureNER(){
+async function ensureNER(opts = {}){
   if (ner) return ner;
 
-  aiStatus.textContent = "Mode: loading…";
+  const silent = !!opts.silent;
+
+  // Do not show a scary "broken" state: AI is optional.
+  if (!silent) aiStatus.textContent = "AI: loading…";
+
   try {
     const pipeline = await _getPipelineFn();
     // Smaller NER model = faster cold-start.
@@ -222,11 +226,12 @@ async function ensureNER(){
       ner = await pipeline("token-classification", modelId);
     }
 
-    aiStatus.textContent = "Mode: AI + rules";
+    aiStatus.textContent = "AI: on-device ✓";
     return ner;
   } catch (e) {
     console.warn(e);
-    aiStatus.textContent = "Mode: rules-only";
+    // Keep it neutral: the app still works in deterministic mode.
+    if (!silent) aiStatus.textContent = "AI: optional";
     throw e;
   }
 }
@@ -355,7 +360,7 @@ async function analyze(){
 
   try{
     const classifier = await ensureNER();
-    aiStatus.textContent = "Mode: extracting…";
+    aiStatus.textContent = "AI: extracting…";
     const ents = await classifier(text);
     // Keep only top entities; group by label
     const keep = ents
@@ -371,10 +376,10 @@ async function analyze(){
       pretty.push(`${e.word} (${e.entity})`);
     }
     snapshot.parties = pretty.length ? pretty.join(", ") : null;
-    aiStatus.textContent = "Mode: AI + rules";
+    aiStatus.textContent = "AI: on-device ✓";
   } catch (e){
     console.warn(e);
-    aiStatus.textContent = "Mode: rules-only";
+    aiStatus.textContent = "AI: optional";
   }
 
   renderSnapshot(snapshot);
@@ -435,5 +440,5 @@ highlightedEl.textContent = "Run analysis to see highlighted signals.";
 
 // Warm up the on-device NER model in the background (non-blocking).
 setTimeout(() => {
-  ensureNER().catch(() => {});
+  ensureNER({ silent: true }).catch(() => {});
 }, 300);
