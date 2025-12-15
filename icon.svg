@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" fill="none" style="color:#ffffff">
+  <title>DealShield</title>
+  <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke-width="92"
+      d="M360 276
+         V748
+         H526
+         C716 748 836 628 836 512
+         C836 396 716 276 526 276
+         H360" />
+    <path stroke-width="88"
+      d="M432 560
+         L514 642
+         L724 430" />
+  </g>
+</svg>

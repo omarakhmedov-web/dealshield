@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" fill="none" style="color:#ffffff">
+  <title>DealShield</title>
+  <!-- Premium D✓ mark (monochrome). Change color via the 'color' style if you inline this SVG. -->
+  <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Main D -->
+    <path stroke-width="78"
+      d="M352 288
+         V736
+         H520
+         C700 736 816 620 816 512
+         C816 404 700 288 520 288
+         H352" />
+    <!-- Check -->
+    <path stroke-width="74"
+      d="M420 556
+         L500 636
+         L704 432" />
+    <!-- Inner highlight (subtle depth) -->
+    <path stroke-width="26" opacity="0.18"
+      d="M384 320
+         V704
+         H520
+         C676 704 784 596 784 512
+         C784 428 676 320 520 320
+         H384" />
+    <path stroke-width="24" opacity="0.14"
+      d="M444 556
+         L500 612
+         L670 442" />
+  </g>
+</svg>
