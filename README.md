@@ -9,7 +9,7 @@ DealShield turns messy cross-border chats/emails/invoice text into:
 This prototype runs fully in the browser (no server required). It uses **Transformers.js** for on-device AI (Named Entity Recognition) and lightweight rules for risk signals.
 
 ## Live demo
-Add your Cloudflare Pages URL here after deployment.
+https://dealshield.pages.dev/
 
 ## How to run locally
 Just open `index.html` in a modern browser (Chrome recommended).  
