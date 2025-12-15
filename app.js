@@ -514,6 +514,59 @@ function exportAsTxt() {
 function exportAsPdf() {
   const bundle = getReportBundle();
   if (!bundle) return;
+
+  const d = new Date();
+  const ymd = d.toISOString().slice(0, 10);
+  const filename = `dealshield_report_${ymd}.pdf`;
+
+  // Preferred: direct download to the browser’s default Downloads folder (no print dialog).
+  try {
+    const jspdf = window.jspdf;
+    if (jspdf && typeof jspdf.jsPDF === "function") {
+      const { jsPDF } = jspdf;
+      const doc = new jsPDF({ unit: "pt", format: "a4" });
+
+      const margin = 48;
+      const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
+      const maxW = pageW - margin * 2;
+
+      doc.setFont("courier", "normal");
+      doc.setFontSize(11);
+
+      const lineH = 14;
+      const raw = (bundle.txt || "").replace(/\r/g, "");
+      const paragraphs = raw.split("\n");
+
+      let y = margin;
+      for (const p of paragraphs) {
+        if (p.trim() === "") {
+          y += lineH;
+          if (y > pageH - margin) {
+            doc.addPage();
+            y = margin;
+          }
+          continue;
+        }
+        const lines = doc.splitTextToSize(p, maxW);
+        for (const line of lines) {
+          doc.text(String(line), margin, y);
+          y += lineH;
+          if (y > pageH - margin) {
+            doc.addPage();
+            y = margin;
+          }
+        }
+      }
+
+      doc.save(filename);
+      return;
+    }
+  } catch (err) {
+    console.warn("Direct PDF export failed; falling back to print.", err);
+  }
+
+  // Fallback: browser print dialog (still produces a valid PDF via “Save as PDF”).
   const w = window.open("", "_blank");
   if (!w) return;
   w.document.open();
