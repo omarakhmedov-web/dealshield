@@ -4,14 +4,20 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>DealShield — AI Deal Risk & Verification Copilot</title>
+  <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+  <meta name="theme-color" content="#0b0f14" />
+
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <div class="wrap">
     <div class="header">
-      <div class="brand">
-        <h1>DealShield</h1>
-        <p>Paste a chat/email/invoice → get a Deal Snapshot, explainable risk score, verification plan, and a safe reply.</p>
+      <div class="brand" style="display:flex; align-items:flex-start; gap:14px;">
+        <img src="./logo.svg" alt="DealShield" style="width:34px; height:34px; margin-top:2px;" />
+        <div>
+          <h1>DealShield</h1>
+          <p>Paste a chat/email/invoice → get a Deal Snapshot, explainable risk score, verification plan, and a safe reply.</p>
+        </div>
       </div>
       <div class="badge">
         <span>DealShield MVP</span>
@@ -93,7 +99,6 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script type="module" src="./app.js"></script>
 </body>
 </html>
